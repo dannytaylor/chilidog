@@ -1,0 +1,23 @@
+html, body {
+		margin:0;
+		padding:0;
+		min-height: 100%;
+
+    	background-image: url('img/404bg.png');
+    	background-repeat: repeat;
+	}
+
+.textimg{
+	width: 640px;
+	height: 360px;
+	vertical-align: middle;
+	position: absolute;
+	 top: 44%;
+	 left: 44%;
+
+  	margin: -320px 0 0 -180px;
+
+    background-image: url('img/404text.png');
+    background-repeat: no-repeat;
+    background-position: center; 
+}

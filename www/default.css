@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css?family=Karla:400');
+
+html, body {
+	margin:0;
+	padding:0;
+  	min-height: 100%;
+	background: white;
+	font-family: 'Karla', sans-serif;
+}
+
+#content {
+	padding-top: 100px;
+	width: 920px;
+	height: 640px;
+	text-align: center;
+	display: table;
+	margin: 0 auto;
+}
+.middle {
+	display: table-cell;
+	width: 640px;
+	height: 100%;
+	vertical-align: middle;
+}
+.middle img{
+	max-width: 100%;
+}
+.left{
+	display: table-cell;
+	width: 140px;
+	height: 100%;
+	vertical-align: middle;
+}
+.right{
+	display: table-cell;
+	width: 140px;
+	height: 100%;
+	vertical-align: middle;
+}
+
+.nav1 {
+	background-image: url(img/nav1.png);
+	background-repeat: no-repeat;
+	display: block;
+}
+
+.nav1a {
+	width: 140px;
+	height: 140px;
+	background-position: 0 0;
+}
+
+.nav1a:hover {
+	width: 140px;
+	height: 140px;
+	background-position: -140px 0;
+}
+.nav1a:active{
+	width: 140px;
+	height: 140px;
+	background-position: 0 0;
+}
+.flipHorizontal{
+	-moz-transform: scale(-1, 1);
+	-webkit-transform: scale(-1, 1);
+	-o-transform: scale(-1, 1);
+	-ms-transform: scale(-1, 1);
+	transform: scale(-1, 1);
+}
+
+a {
+	color: grey;
+	text-decoration: none;
+}
+a:hover {
+	color: black;
+}
+
+footer {
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1rem;
+  padding-top: 80px;
+  text-align: center;
+  height:92px;
+  	width:480px;
+  	margin:0 auto;
+}
+footer img{
+	max-height: 92px;
+}
+
+ .links{ 
+   display: none;
+  	width:480px;
+ }
+ footer:hover .links{
+   display : block;
+   height:100%;
+  	width:480px;
+  	vertical-align: middle;
+ }
+ footer:hover .dog{
+   display : none;
+   height:100%;
+  	width:480px;
+ }

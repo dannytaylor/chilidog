@@ -19,7 +19,7 @@ sitegen.create =>
 
 	deploy_to "daniel@chilidog.faith", "www/sanic/"
 	-- feed "feed.moon", "feed.xml"
-	local prev,next
+	local prev,next,first,last
 
 	prev = '01'
 	for i=1,#comicTable
@@ -31,12 +31,16 @@ sitegen.create =>
 
 		if i == 1
 			prev = '01'
+			first = 'style="visibility: hidden"'
 		else 
 			prev = string.sub(comicTable[i - 1], 1, string.find(comicTable[i - 1],'.')+1)
+			first = ''
 		if i == #comicTable 
 			next = tostring(#comicTable)
+			last = 'style="visibility: hidden"'
 		else 
 			next = string.sub(comicTable[i + 1], 1, string.find(comicTable[i + 1],'.')+1)
+			last = ''
 
 		add 'c/'..comicNum..'.md', {
 			template: 'comic', 
@@ -44,6 +48,8 @@ sitegen.create =>
 			comicName:comicTable[i], l
 			leftLink:prev, 
 			rightLink:next,
-			num:comicNum
+			num:comicNum,
+			leftVis:first,
+			rightVis:last
 		}
 	add 'c/index.md', template:'index', latest:tostring(#comicTable), target:'index'

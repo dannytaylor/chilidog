@@ -43,6 +43,7 @@ sitegen.create =>
 			target:comicNum, 
 			comicName:comicTable[i], l
 			leftLink:prev, 
-			rightLink:next
+			rightLink:next,
+			num:comicNum
 		}
-
+	add 'c/index.md', template:'index', latest:tostring(#comicTable), target:'index'

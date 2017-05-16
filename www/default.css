@@ -6,8 +6,15 @@ html, body {
 		min-height: 100%;
 		background: white;
 		font-family: 'Karla', sans-serif;
+		text-align: center;
 }
-
+.ad{
+	display: inline-block;
+	position: absolute;
+	width: 200px;
+	margin-left: -100px;
+	padding-top: 12px;
+}
 #content {
 		padding-top: 100px;
 		width: 920px;

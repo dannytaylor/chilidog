@@ -1,7 +1,7 @@
 -- site.moon
 sitegen = require "sitegen"
 lfs = require 'lfs'
-
+magick = require "magick"
 
 
 
@@ -20,8 +20,7 @@ sitegen.create =>
 	lfs.mkdir('c')
 
 	deploy_to "daniel@chilidog.faith", "www/sanic/"
-	-- feed "feed.moon", "feed.xml"
-	local prev,next,first,last
+	local prev,next,first,last,frameHeight,frame
 
 	prev = '01'
 	for i=1,#comicTable
@@ -30,6 +29,15 @@ sitegen.create =>
 		-- make empty markdown folder
 		io.open('c/'..comicNum..'.md','w')
 		io.flush()
+
+		img = magick.load_image(comicDir..comicTable[i])
+		
+		w = img\get_width!
+		h = img\get_height!
+		frameHeight = math.floor(640*h/w)
+		frame = tostring(frameHeight)..'px'
+
+		-- divHeight = 640 * h/w
 
 		if i == 1
 			prev = '1'
@@ -44,6 +52,7 @@ sitegen.create =>
 			next = tostring(i+1)
 			last = ''
 
+
 		add 'c/'..comicNum..'.md', {
 			template: 'comic', 
 			target:tostring(i), 
@@ -53,6 +62,19 @@ sitegen.create =>
 			num:i,
 			leftVis:first,
 			rightVis:last,
-			lastNum:tostring(#comicTable)
+			lastNum:tostring(#comicTable),
+			fheight:frame
 		}
-	add 'c/index.md', template:'index', latest:tostring(#comicTable), target:'index'
+	add 'c/index.md', {
+		template: 'comic', 
+		target:'index', 
+		comicName:comicTable[#comicTable],
+		leftLink:prev, 
+		rightLink:next,
+		num:#comicTable,
+		leftVis:first,
+		rightVis:last,
+		lastNum:tostring(#comicTable),
+		fheight:frame
+	}
+	add 'c/about.md', template:'about', latest:tostring(#comicTable), target:'about'

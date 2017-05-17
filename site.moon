@@ -37,8 +37,6 @@ sitegen.create =>
 		frameHeight = math.floor(640*h/w)
 		frame = tostring(frameHeight)..'px'
 
-		-- divHeight = 640 * h/w
-
 		if i == 1
 			prev = '1'
 			first = 'style="visibility: hidden"'
@@ -78,3 +76,4 @@ sitegen.create =>
 		fheight:frame
 	}
 	add 'c/about.md', template:'about', latest:tostring(#comicTable), target:'about'
+	feed "feed.moon", "feed.xml"

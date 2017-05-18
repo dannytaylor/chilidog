@@ -9,4 +9,4 @@ my sanic comics with web pages built using [sitegen](https://github.com/dannytay
 
 also a basic refresher on css and html
 
-this works for the # of comics I have and the frequency I make new ones, but using jekyll would probably make more sense in most cases.
+this works since I only have a few comics, but since I have to rebuild and deploy the site for every change it's not a long term solution

@@ -27,7 +27,7 @@ sitegen.create =>
 
 		comicNum = string.sub(comicTable[i], 1, string.find(comicTable[i],'.')+1)
 		-- make empty markdown folder
-		io.open('c/'..comicNum..'.md','w')
+		io.open('c/'..comicNum..'.md','a')
 		io.flush()
 
 		img = magick.load_image(comicDir..comicTable[i])

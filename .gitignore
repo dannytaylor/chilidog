@@ -2,4 +2,7 @@ c
 .sitegen_cache
 *.sublime-workspace
 
-www/googlec6fdc8d8273b83de\.html
+www/404.html
+www/404.css
+www/google*
+www/CNAME

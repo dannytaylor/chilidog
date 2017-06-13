@@ -10,17 +10,20 @@ html, body {
 }
 .ad{
 	display: inline-block;
-	position: absolute;
 	width: 200px;
-	margin-left: -100px;
-	padding-top: 32px;
+	margin-left: 0px;
+	padding: 44px 0 20px 0;
+	text-align:  center;
+}
+.ad img{
+	max-height: 100px;
+	width: 200px;
 }
 #content {
 	display: inline-block;
 	width: 840px;
 }
 #main {
-	padding-top: 100px;
 	width: 840px;
 	min-height: 320px;
 	text-align: center;

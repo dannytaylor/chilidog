@@ -23,7 +23,6 @@
 			font-family: arial,sans-serif;
 		}
 
-
 		/* Godot Engine default theme style
 		 * ================================ */
 
@@ -83,11 +82,15 @@
 			background-color: #fff;
 		}
 		.skp {
-			display: inline-block;
+			position: absolute;
+			top: 0;
+			left: 0;
 			margin: 10px;
 			width: 100px;
 			height: 100px;
-			background-image: url(./skp.png);
+			background-image: url("/img/skp.png");
+		}
+		.skp:hover{
 			animation: play .8s steps(2) infinite;
 		}
 		#canvas {
@@ -198,6 +201,7 @@
 	<header style='padding-top: 20px;'>
 		<img src="./txt.gif">
 	</header>
+	<a href="/"><i class='skp'></i></a>
 	<div id="container">
 		<canvas id="canvas" width="640" height="360" onclick="canvas.ownerDocument.defaultView.focus();" oncontextmenu="event.preventDefault();">
 			HTML5 canvas appears to be unsupported in the current browser.<br />Please try updating or use a different browser.

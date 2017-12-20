@@ -44,10 +44,10 @@ html, body {
 }
 .middle img{
 	max-width: 100%;
-/*    -webkit-animation: fadein 0.4s; 
-       -moz-animation: fadein 0.4s; 
-        -ms-animation: fadein 0.4s; 
-         -o-animation: fadein 0.4s; 
+/*    -webkit-animation: fadein 0.4s;
+       -moz-animation: fadein 0.4s;
+        -ms-animation: fadein 0.4s;
+         -o-animation: fadein 0.4s;
             animation: fadein 0.4s;*/
 }
 
@@ -154,10 +154,10 @@ footer {
 	margin:0 auto;
 	background-image: url(img/dog.png);
 	background-repeat: no-repeat;
-	background-position: center; 
+	background-position: center;
 }
 
- .links{ 
+ .links{
 	display: none;
 	width:480px;
 	line-height: 1.6em;
@@ -197,7 +197,7 @@ footer {
 
 	background-image: url('img/dog-large.png');
 	background-repeat: no-repeat;
-	background-position: center; 
+	background-position: center;
 	-webkit-animation-name: Floating;
 	-webkit-animation-duration: 3s;
 	-webkit-animation-iteration-count: infinite;
@@ -206,13 +206,13 @@ footer {
 @-webkit-keyframes Floating{
     from {-webkit-transform:translate(0, 0px);}
     65% {-webkit-transform:translate(0, 40px);}
-    to {-webkit-transform: translate(0, -0px);    }    
+    to {-webkit-transform: translate(0, -0px);    }
 }
 
 @keyframes Floating{
     from {-webkit-transform:translate(0, 0px);}
     65% {-webkit-transform:translate(0, 40px);}
-    to {-webkit-transform: translate(0, -0px);    }    
+    to {-webkit-transform: translate(0, -0px);    }
 }
 
 @keyframes fadein {

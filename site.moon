@@ -2,11 +2,10 @@
 sitegen = require "sitegen"
 lfs = require 'lfs'
 magick = require "magick"
-
-
+date = require "date"
 
 sitegen.create =>
-
+	rss= {}
 	comicDir = 'www/img/comics/'
 	comicTable = {}
 	-- add all our comics to a table
@@ -29,7 +28,7 @@ sitegen.create =>
 		-- make empty markdown folder
 		io.open('c/'..comicNum..'.md','a')
 		io.flush()
-
+		-- print comicDir .. comicTable[i]
 		img = magick.load_image(comicDir..comicTable[i])
 		
 		w = img\get_width!
@@ -63,6 +62,15 @@ sitegen.create =>
 			lastNum:tostring(#comicTable),
 			fheight:frame
 		}
+
+		rss[i] = {}
+		rss[i]["file"] = comicTable[i]
+		mod = lfs.attributes(comicDir..'/'..comicTable[i])["modification"]
+		rss[i]["date"] = date os.date("*t",mod)["year"], os.date("*t",mod)["month"], os.date("*t",mod)["day"]
+		rss[i]["title"] = 'new chilidog'
+		rss[i]["link"] = 'http://chilidog.faith/'.. comicNum
+		rss[i]["description"] = 'dog #'.. comicNum
+
 	add 'c/index.md', {
 		template: 'comic', 
 		target:'index', 
@@ -76,4 +84,30 @@ sitegen.create =>
 		fheight:frame
 	}
 	add 'c/about.md', template:'about', latest:tostring(#comicTable), target:'about'
-	feed "feed.moon", "feed.xml"
+
+
+	feed = io.open("www/index.xml","w")
+	io.write("")
+	io.close(feed)
+	feed = io.open("www/index.xml","a")
+	io.output(feed)
+
+	io.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>","\n")
+	io.write("<rss version=\"2.0\"><channel><title>sanic comics</title>","\n")
+	io.write("<link></link>","\n")
+	io.write("<description></description>","\n")
+
+	for i=#comicTable,1,-1
+		io.write("<item><title>chilidog #".. i .."</title>","\n")
+		io.write("<link>http://chilidog.faith/" .. i .."</link>","\n")
+		io.write("<pubDate>".. rss[i]["date"] .."</pubDate>","\n")
+		io.write("<description><![CDATA[")
+		io.write("<a href=\"http://chilidog.faith/" .. i .. "\"><img src=\"http://chilidog.faith/img/comics/"..rss[i]["file"].."\"></a>")
+		io.write("]]></description></item>","\n")
+
+	io.write("</channel></rss>","\n")
+
+
+	io.close(feed)
+
+

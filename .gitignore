@@ -8,3 +8,7 @@ www/google*
 www/CNAME
 www/about.html
 www/index.html
+
+www/bday/index\.asm\.js
+
+www/index\.xml

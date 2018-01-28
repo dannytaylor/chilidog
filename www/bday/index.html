@@ -1,437 +1,415 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
-<head>
-	<meta charset="utf-8" />
-	<title>birday</title>
-	<script>
-	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+<!doctype html>
+<!--
+     This work uses Amulet (http://www.amulet.xyz).
+     For the Amulet license, please see amulet_license.txt
+     which should be in the same directory as this file.
+-->
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title id="title">Amulet</title>
+    <style type="text/css">
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0 auto;
+    padding: 30px;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    background-color: #fff;
+    text-align: center;
+}
+#container {
+    display:inline-block;
+    margin: auto;
+    width: 960px;
+}
+#status-overlay {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    z-index: 1000;
+}
+#status-positioner {
+    position: absolute;
+    left: 50%;
+    bottom: 20%;
+}
+#status-box {
+    width: 400px;
+    height: 16px;
+    margin-left: -200px;
+    border: 2px solid #fff;
+    padding: 2px;
+}
+#status-bar {
+    width: 1%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+}
+#status-bar.error {
+    background-color: #f00;
+}
+#status-box.error {
+    border: 2px solid #f00;
+}
+#canvas {
+    margin: 0 auto;
+    padding: 0;
+    width: 960px;
+    height: 540px;
+}
+#video {
+    display: none;
+}
+#status {
+    color: #fff;
+    margin: 0 0 10px -200px;
+    font-size: 16px;
+    font-weight: bold;
+}
+.undecorated-container {
+    /*position: absolute;*/
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.decorated-container {
+    /*position: absolute;*/
+    top: 14px;
+    left: 14px;
+    right: 14px;
+    bottom: 24px;
+}
+#footer {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 20px;
+    text-align: center;
+    font-size: 15px;
+    color: #ffffff;
+    padding: 4px 0 0 0;
+}
+#footer a,
+#footer a:visited {
+    color: #ffffff;
+}
+#hacklink,
+#hacklink:visited {
+    color: #29a3c8 !important;
+}
 
-	  ga('create', 'UA-99239283-1', 'auto');
-	  ga('send', 'pageview');
+.skp {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 10px;
+    width: 100px;
+    height: 100px;
+    background-image: url("/img/skp.png");
+}
+.skp:hover{
+    animation: play .8s steps(2) infinite;
+}
+    </style>
+  </head>
+  <body>
+    <a href="/"><i class='skp'></i></a>
+    <div id="container">
+        <a href="https://github.com/dannytaylor/birday-amulet"><img src="txt.gif"></a>
+        <video id="video" autoplay></video>
+        <div id="status-overlay">
+            <div id="status-positioner">
+                <div id="status"></div>
+                <div id="status-box">
+                    <div id="status-bar"></div>
+                </div>
+            </div>
+        </div>
+        <canvas id="canvas"></canvas>
 
-	</script>
-	<style type="text/css">
-		body {
-			margin: 0;
-			border: 0 none;
-			padding: 0;
-			text-align: center;
-			background-color: white;
-			font-family: arial,sans-serif;
-		}
+        <img src="txt3.gif"><br>
+        <img src="txt2.gif">
+    </div></div>
+    <div id="footer">Made with <a target="_blank" href="http://www.amulet.xyz">Amulet</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a id="hacklink" href="" target="_blank">Hack</a></div>
+    <script type="text/javascript">
+var status_timer;
+var is_in_editor = typeof in_editor !== "undefined";
+if (typeof log_output === "undefined") {
+    log_output = function(msg) {};
+}
 
-		/* Godot Engine default theme style
-		 * ================================ */
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
 
-		.godot {
-			color: #e0e0e0;
-			background-color: #fff;
-			background-image: linear-gradient(to bottom, #403e48, #35333c);
-			border: 1px solid #45434e;
-			box-shadow: 0 0 1px 1px #2f2d35;
-		}
+var pointerLockElementName = null;
+if ('pointerLockElement' in document) {
+    pointerLockElementName = 'pointerLockElement';
+} else if ('mozPointerLockElement' in document) {
+    pointerLockElementName = 'mozPointerLockElement';
+} else if ('webkitPointerLockElement' in document) {
+    pointerLockElementName = 'webkitPointerLockElement';
+}
 
-		button.godot {
-			font-family: arial,sans-serif; /* override user agent style */
-			padding: 1px 5px;
-			background-color: #37353f;
-			background-image: linear-gradient(to bottom, #413e49, #3a3842);
-			border: 1px solid #514f5d;
-			border-radius: 1px;
-			box-shadow: 0 0 1px 1px #2a2930;
-		}
+var havePointerLock = pointerLockElementName != null;
 
-		button.godot:hover {
-			color: #f0f0f0;
-			background-color: #44414e;
-			background-image: linear-gradient(to bottom, #494652, #423f4c);
-			border: 1px solid #5a5667;
-			box-shadow: 0 0 1px 1px #26252b;
-		}
+navigator.getUserMedia  = navigator.getUserMedia ||
+                          navigator.webkitGetUserMedia ||
+                          navigator.mozGetUserMedia ||
+                          navigator.msGetUserMedia;
 
-		button.godot:active {
-			color: #fff;
-			background-color: #3e3b46;
-			background-image: linear-gradient(to bottom, #36343d, #413e49);
-			border: 1px solid #4f4c59;
-			box-shadow: 0 0 1px 1px #26252b;
-		}
+window.amulet = {};
 
-		button.godot:disabled {
-			color: rgba(230, 230, 230, 0.2);
-			background-color: #3d3d3d;
-			background-image: linear-gradient(to bottom, #434343, #393939);
-			border: 1px solid #474747;
-			box-shadow: 0 0 1px 1px #2d2b33;
-		}
+function run(script) {
+    var request = new XMLHttpRequest();
+    request.open("GET", script, true);
+    request.onload = function() {
+        if (this.status >= 200 && this.status < 400) {
+            var data = this.responseText;
+            load(data);
+        } else {
+            console.log("error loading script "+script+": "+this.statusText);
+        }
+    };
+    request.onerror = function() {
+        console.log("error loading script "+script);
+    };
+    request.send();
+}
 
+function init_canvas() {
+    var canvas = document.getElementById("canvas");
+    window.amulet.have_pointer_lock = function() {
+        return canvas === document[pointerLockElementName];
+    };
+    // Pop up an alert when webgl context is lost.
+    // TODO: handle webgl context restore event.
+    // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
+    canvas.addEventListener("webglcontextlost", function(e) {
+        alert('WebGL context lost. You will need to reload the page or, failing that, restart your browser).');
+        e.preventDefault();
+    }, false);
+    canvas.addEventListener("contextmenu", function(e) { 
+        e.preventDefault();
+        return false;
+    });
+    if (havePointerLock) {
+        canvas.addEventListener("click", function() {
+            if (window.amulet.pointer_lock_requested) {
+                canvas.requestPointerLock =
+                    canvas.requestPointerLock ||
+                    canvas.mozRequestPointerLock ||
+                    canvas.webkitRequestPointerLock;
+                canvas.requestPointerLock();
+            }
+        });
+        document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock || document.webkitExitPointerLock;
+    }
+}
 
-		/* Canvas / wrapper
-		 * ================ */
+function set_error_text(text) {
+    document.getElementById("status").innerHTML = text;
+    document.getElementById("status-box").classList.add("error");
+    document.getElementById("status-bar").classList.add("error");
+}
 
-		#container {
-			display: inline-block; /* scale with canvas */
-			vertical-align: top; /* prevent extra height */
-			position: relative; /* root for absolutely positioned overlay */
-			margin: 0;
-			border: 0 none;
-			padding: 0;
-			background-color: #fff;
-		}
-		.skp {
-			position: absolute;
-			top: 0;
-			left: 0;
-			margin: 10px;
-			width: 100px;
-			height: 100px;
-			background-image: url("/img/skp.png");
-		}
-		.skp:hover{
-			animation: play .8s steps(2) infinite;
-		}
-		#canvas {
-			display: block;
-			margin: 0 auto;
-			/* canvas must have border and padding set to zero to
-			 * calculate cursor coordinates correctly */
-			border: 0 none;
-			padding: 0;
-			background-color: #fff;
-		}
-		@keyframes play {
-		   from { background-position: -100px; }
-		   to { background-position: -300px; }
-		}
+function set_progress(perc) {
+    document.getElementById("status-bar").style.width = perc + "%";
+}
 
+var perc = 1;
+var delta = 0.65;
+var phase1_limit = 33;
+function phase1() {
+    perc = Math.min(phase1_limit, perc + delta);
+    delta = delta * 0.98;
+    set_progress(perc);
+    //console.log(perc);
+}
+function phase2() {
+    var prog = window.amulet.load_progress || 0;
+    set_progress(prog * ((100-phase1_limit)/100) + phase1_limit);
+}
+var phase = phase1;
+function animate_loading_status() {
+    if (phase === phase1 && document.readyState == "complete") {
+        phase = phase2;
+        set_progress(phase1_limit);
+    }
+    phase();
+}
 
-		/* Status display
-		 * ============== */
+status_timer = setInterval(animate_loading_status, 100);
+function clear_status_timer() {
+    clearInterval(status_timer);
+    status_timer = null;
+}
 
-		#status-container {
-			position: absolute;
-			left: 0;
-			top: 0;
-			right: 0;
-			bottom: 0;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			/* don't consume click events - make children visible explicitly */
-			visibility: hidden;
-			background-color: #fff;
-		}
+function remove_status_overlay() {
+    document.getElementById("status-overlay").style.display = 'none';
+    clear_status_timer();
+}
 
-		#status {
-			visibility: visible;
-			padding: 4px 6px;
-		}
+var pending_load = null;
+var started = false;
 
+function load(script) {
+    if (!started) {
+        pending_load = script;
+    } else {
+        Module.ccall('am_emscripten_run', null, ['string'], [script]);
+    }
+}
 
-		/* On-hover controls
-		 * ================= */
+function load_gist(id) {
+    console.log("loading gist " + id);
+    var url = 'https://api.github.com/gists/'+id;
+    var request = new XMLHttpRequest();
+    request.open("GET", url, true);
+    request.onload = function() {
+        if (this.status >= 200 && this.status < 400) {
+            console.log("received gist");
+            var data = this.responseText;
+            var res = JSON.parse(data);
+            var code = res.files["main.lua"].content;
+            load(code);
+            remove_status_overlay();
+        } else {
+            console.log("error loading gist "+url+": "+this.statusText);
+        }
+    };
+    request.onerror = function() {
+        console.log("error loading gist "+url);
+    };
+    request.send();
+}
 
-		#controls {
-			visibility: hidden;
-			opacity: 0.0;
-			transition: opacity 500ms ease-in-out 200ms;
-			position: absolute;
-			right: 16px;
-			top: 16px;
-			padding: 3px 5px;
-			font-size: small;
-			-moz-user-select: none;
-			-webkit-user-select: none;
-			-ms-user-select: none;
-		}
+window.amulet.ready = function() {
+    var gist = getParameterByName("gist");
+    try {
+        init_canvas();
+        if (!gist || is_in_editor) {
+            remove_status_overlay();
+        }
+    } catch (e) {
+        clear_status_timer();
+        set_error_text('Something went wrong.<br>See JavaScript console for details.');
+        throw e;
+    }
+    started = true;
+    if (gist && !is_in_editor) {
+        document.getElementById("container").classList.remove("undecorated-container");
+        document.getElementById("container").classList.add("decorated-container");
+        document.getElementById("footer").style.display = "block";
+        document.getElementById("hacklink").href = "http://www.amulet.xyz/editor.html?gist=" + gist;
+        pending_load = null;
+        load_gist(gist);
+    } else if (pending_load) {
+        console.log("loading: " + pending_load);
+        load(pending_load);
+        pending_load = null;
+    }
+}
 
-		#container:hover > #controls {
-			visibility: hidden;
-			opacity: 0.0;
-			transition: opacity 60ms ease-in-out;
-		}
+window.amulet.error = function(msg) {
+    set_error_text(msg);
+}
 
-		#controls > button,
-		#controls > label {
-			vertical-align: middle;
-			margin-left: 2px;
-			margin-right: 2px;
-		}
+function set_visibility_handler() {
+    var hidden, visibilityChange; 
+    if (typeof document.hidden !== "undefined") {
+      hidden = "hidden";
+      visibilityChange = "visibilitychange";
+    } else if (typeof document.mozHidden !== "undefined") {
+      hidden = "mozHidden";
+      visibilityChange = "mozvisibilitychange";
+    } else if (typeof document.msHidden !== "undefined") {
+      hidden = "msHidden";
+      visibilityChange = "msvisibilitychange";
+    } else if (typeof document.webkitHidden !== "undefined") {
+      hidden = "webkitHidden";
+      visibilityChange = "webkitvisibilitychange";
+    }
+    window.amulet.window_hidden = 0;
+    window.amulet.window_has_focus = 1;
+    document.addEventListener(visibilityChange, function(event) {
+        window.amulet.window_hidden = document[hidden] ? 1 : 0;
+    }, false);
+    window.addEventListener('blur', function(event) {
+        window.amulet.window_has_focus = 0;
+    }, false);
+    window.addEventListener('focus', function(event) {
+        window.amulet.window_has_focus = 1;
+    }, false);
+}
+set_visibility_handler();
 
-		#controls > label > input[type="checkbox"] {
-			/* override user agent style */
-			margin-left: 0;
-		}
+function run_waiting() {
+    Module.ccall('am_emscripten_run_waiting', null, [], []);
+}
+function pause() {
+    Module.ccall('am_emscripten_pause', null, [], []);
+}
+function resume() {
+    Module.ccall('am_emscripten_resume', null, [], []);
+}
 
-		label > input {
-			vertical-align: middle;
-		}
+window.amulet.run_waiting = is_in_editor ? 1 : 0;
+window.amulet.no_load_data = getParameterByName("gist") ? 1 : 0;
 
-		#display-output { display: none; }
+//------------------------------------------------------------------------
 
-
-		/* Debug output
-		 * ============ */
-
-		#output {
-			display: none;
-			margin: 6px auto;
-			border: 2px groove grey;
-			padding: 4px;
-			outline: none;
-			text-align: left;
-			white-space: pre-wrap;
-			font-size: small;
-			color: #eee;
-			background-color: #fff;
-			font-family: "Lucida Console", Monaco, monospace;
-		}
-
-
-		/* Export style include
-		 * ==================== */
-
-
-	</style>
-</head>
-<body>
-	<header style='padding-top: 20px;'>
-		<img src="./txt.gif">
-	</header>
-	<a href="/"><i class='skp'></i></a>
-	<div id="container">
-		<canvas id="canvas" width="640" height="360" onclick="canvas.ownerDocument.defaultView.focus();" oncontextmenu="event.preventDefault();">
-			HTML5 canvas appears to be unsupported in the current browser.<br />Please try updating or use a different browser.
-		</canvas>
-		<div id="status-container">
-			<span id="status" class="godot" onclick="this.style.visibility='hidden';">loading birthday page...</span>
-		</div>
-		<div id="controls" class="godot">
-			<label id="display-output"><input id="output-toggle" type="checkbox" autocomplete="off" onchange="Presentation.setOutputVisible(this.checked);" />display output</label>
-			<!-- hidden until implemented
-			<label><input id="lock-cursor" type="checkbox" autocomplete="off" />lock cursor</label>
-			<label><input id="resize-canvas" type="checkbox" autocomplete="off" />resize canvas</label>
-			-->
-			<button id="fullscreen" class="godot" type="button" disabled="disabled" autocomplete="off" onclick="Presentation.goFullscreen();">fullscreen</button>
-		</div>
-		<br>
-		<img src="./txt5.gif">
-		<br>
-		<img src="./txt2.gif">
-		<br>
-		<a href="https://github.com/dannytaylor/birday">
-			<img src="./txt3.gif">
-			<!--
-				<i class='skp'></i>
-			-->
-	</a>
-	</div>
-	<!-- Firefox adds extra space to textarea, but shouldn't matter too much https://bugzilla.mozilla.org/show_bug.cgi?id=33654 -->
-	<textarea id="output" rows="10" cols="100" readonly="readonly" style="resize:none"></textarea>
-
-	<script type="text/javascript">//<![CDATA[
-		var Presentation = (function() {
-			var statusElement = document.getElementById("status");
-			var outputElement = document.getElementById("output");
-			var doneLoading = false;
-
-			function onLoaded() {
-				doneLoading = true;
-				var fullscreenButtonElement = document.getElementById("fullscreen");
-				fullscreenButtonElement.disabled = false;
-			}
-
-			var presentation = {
-				statusElement: statusElement,
-				outputElement: outputElement,
-				postRun: [],
-				setOutputVisible: function setOutputVisible(visible) {
-					outputElement.style.display = (visible?"block":"none");
-				},
-				setStatusVisible: function setStatusVisible(visible) {
-					statusElement.style.visibility = (visible?"visible":"hidden");
-				},
-				setStatus: function setStatus(text) {
-					if (!text) {
-						// emscripten sets empty string as status after "Running..."
-						// per timeout, but another status may have been set by then
-						if (Presentation.setStatus.lastText === "Running...") {
-							Presentation.setStatusVisible(false);
-							onLoaded();
-						}
-					} else {
-						Presentation.setStatus.lastText = text;
-						statusElement.innerHTML = text;
-						Presentation.setStatusVisible(true);
-					}
-				},
-				goFullscreen: function goFullscreen() {
-					if (doneLoading) Module.requestFullScreen(false, false);
-				}
-			};
-
-			window.onerror = function(event) { presentation.setStatus("Failure during start-up, see JavaScript console") };
-
-			if (true) { // controls enabled
-				(function() {
-					var controlsElement = document.getElementById("controls");
-					controlsElement.style.visibility="visible";
-				})();
-			}
-
-			if (false) { // debugging enabled
-				(function() {
-					var outputToggleLabel = document.getElementById("display-output");
-					var outputToggle = document.getElementById("output-toggle");
-
-					outputElement.value = ""; // clear browser cache
-					outputElement.style.display = "block";
-					outputToggle.checked = true;
-					outputToggleLabel.style.display = "inline";
-
-					presentation.print = function print(text) {
-						if (outputElement.value.length !== 0)
-							outputElement.value += "\n";
-						outputElement.value += text;
-						outputElement.scrollTop = outputElement.scrollHeight; // focus on bottom
-					};
-				})();
-
-				presentation.postRun.push(function() {
-					window.onerror = function(event) { presentation.print("**EXCEPTION**:", event) };
-				});
-
-			} else {
-				presentation.postRun.push(function() { window.onerror = null; });
-			}
-
-			return presentation;
-		})();
-
-		// Emscripten interface
-		var Module = (function() {
-			var print = (function() {
-				if (typeof Presentation.print === "function") {
-					return function print(text) {
-						if (arguments.length > 1)
-							text = Array.prototype.slice.call(arguments).join(" ");
-						console.log(text);
-						Presentation.print(text);
-					};
-				} else {
-					return function print(text) {
-						if (arguments.length > 1)
-							text = Array.prototype.slice.call(arguments).join(" ");
-						console.log(text);
-					};
-				}
-			})();
-
-			var postRun = [];
-			if (typeof Presentation !== "undefined" && Presentation.postRun instanceof Array) {
-				postRun = Presentation.postRun;
-			}
-
-			var canvas = (function() {
-				var canvasElement = document.getElementById("canvas");
-
-				// As a default initial behavior, pop up an alert when WebGL context is lost. To make your
-				// application robust, you may want to override this behavior before shipping!
-				// See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
-				canvasElement.addEventListener("webglcontextlost", function(e) { alert("WebGL context lost. Plase reload the page."); e.preventDefault(); }, false);
-
-				return canvasElement;
-			})();
-
-			var setStatus = (function() {
-				if (typeof Presentation.setStatus === "function")
-					return function setStatus(text) {
-						if (!Module.setStatus.last)
-							Module.setStatus.last = { time: Date.now(), text: "" };
-						if (text === Module.setStatus.text)
-							return;
-						var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
-						var now = Date.now();
-						if (m) {
-							if (now - Date.now() < 30) // if this is a progress update, skip it if too soon
-								return;
-							text = m[1];
-						}
-						Presentation.setStatus(text);
-					};
-				else
-					return function setStatus(text) {
-						if (!Module.setStatus.last)
-							Module.setStatus.last = { time: Date.now(), text: "" };
-						if (text === Module.setStatus.text)
-							return;
-						var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
-						var now = Date.now();
-						if (m) {
-							if (now - Date.now() < 30) // if this is a progress update, skip it if too soon
-								return;
-							text = m[1];
-						}
-					};
-			})();
-
-			return {
-				TOTAL_MEMORY: 268435456,
-				preRun: [],
-				postRun: postRun,
-				print: print,
-				printErr: function printErr(text) {
-					if (arguments.length > 1)
-						text = Array.prototype.slice.call(arguments).join(" ");
-					if (0) { // XXX disabled for safety `if (typeof dump == "function")`
-						dump(text + "\n"); // fast, straight to the real console
-					} else {
-						console.error(text);
-					}
-				},
-				canvas: canvas,
-				setStatus: setStatus,
-				totalDependencies: 0,
-				monitorRunDependencies: function monitorRunDependencies(left) {
-					this.totalDependencies = Math.max(this.totalDependencies, left);
-					Module.setStatus(left ? "Preparing... (" + (this.totalDependencies-left) + "/" + this.totalDependencies + ")" : "All downloads complete.");
-				}
-			};
-		})();
-
-		Presentation.setStatus("Downloading...");
-
-	//]]></script>
-	<script type="text/javascript" src="indexfs.js"></script>
-	<script>
-		(function() {
-			var script = document.createElement('script');
-			script.src = "index.asm.js";
-			script.onload = function() {
-				setTimeout(function() {
-					(function() {
-						var memoryInitializer = 'index.mem';
-						if (typeof Module.locateFile === 'function') {
-							memoryInitializer = Module.locateFile(memoryInitializer);
-						} else if (Module.memoryInitializerPrefixURL) {
-							memoryInitializer = Module.memoryInitializerPrefixURL + memoryInitializer;
-						}
-						var xhr = Module.memoryInitializerRequest = new XMLHttpRequest();
-						xhr.open('GET', memoryInitializer, true);
-						xhr.responseType = 'arraybuffer';
-						xhr.send(null);
-					})();
-
-					var script = document.createElement('script');
-					script.src = "index.js";
-					document.body.appendChild(script);
-				}, 1); // delaying even 1ms is enough to allow compilation memory to be reclaimed
-			};
-			document.body.appendChild(script);
-		})();
-	</script>
-</body>
+var Module = {
+  preRun: [],
+  postRun: [],
+  print: function(text) {
+      console.log(text);
+      if (text == "ERROR") {
+          if (handle_error) handle_error();
+      } else {
+          log_output(text);
+      }
+  },
+  printErr: function(text) {
+    text = Array.prototype.slice.call(arguments).join(' ');
+    console.error(text);
+    log_output(text);
+  },
+  canvas: document.getElementById("canvas"),
+  keyboardListeningElement: document.getElementById("player-panel") || document,
+  setStatus: function(text) {
+      console.log(text);
+  },
+  totalDependencies: 0,
+  monitorRunDependencies: function(left) {
+    this.totalDependencies = Math.max(this.totalDependencies, left);
+    Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+  }
+};
+Module.setStatus('Downloading...');
+window.onerror = function(event) {
+  // TODO: do not warn on ok events like simulating an infinite loop or exitStatus
+  set_error_text('Something went wrong.<br>See JavaScript console for details.');
+  Module.setStatus = function(text) {
+    if (text) Module.printErr('[post-exception status] ' + text);
+  };
+};
+    </script>
+    <script async type="text/javascript" src="amulet.js"></script>
+  </body>
 </html>

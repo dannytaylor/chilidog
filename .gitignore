@@ -2,8 +2,6 @@ c
 .sitegen_cache
 *.sublime-workspace
 
-www/404.html
-www/404.css
 www/google*
 www/CNAME
 www/about.html
@@ -18,3 +16,5 @@ www/bday/amulet_license\.txt
 www/bday/data\.pak
 
 www/bday/amulet\.js
+
+www/dgnbyONLINE/

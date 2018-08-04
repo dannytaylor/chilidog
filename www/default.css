@@ -10,6 +10,7 @@ html, body {
 }
 .ad{
 	display: inline-block;
+	visibility: hidden;
 	width: 200px;
 	margin-left: 0px;
 	padding: 44px 0 20px 0;
